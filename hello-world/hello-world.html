@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html ng-app="helloWorld">
+  <head>
+    <meta charset="utf-8">
+    <title>Hello World</title>
+    <script src="../assets/lib/angular.js"></script>
+    <script src="../assets/lib/foundation/js/vendor/jquery.js"></script>
+    <script src="../assets/lib/foundation/js/vendor/foundation.js"></script>
+    <script src="../assets/lib/foundation/js/vendor/what-input.js"></script>
+    <script src="../assets/lib/foundation/js/app.js"></script>
+    <link rel="stylesheet" href="../assets/lib/foundation/css/foundation.css" charset="utf-8">
+    <script type="text/javascript">
+      angular.module("helloWorld", []);
+
+      angular.module("helloWorld").controller("helloWorldCtrl", function ($scope) {
+        $scope.message = "Hello World!;"
+      });
+    </script>
+  </head>
+  <body>
+    <div ng-controller="helloWorldCtrl">
+      {{message}}
+    </div>
+  </body>
+</html>
