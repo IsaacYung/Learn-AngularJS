@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html ng-app="telephoneList">
+  <head>
+    <meta charset="utf-8">
+    <title>Lista Telefonica</title>
+    <script src="../assets/lib/angular.js"></script>
+    <script src="../assets/lib/angular-messages.js"></script>
+    <script src="../assets/lib/foundation/js/vendor/jquery.js"></script>
+    <script src="../assets/lib/foundation/js/vendor/foundation.js"></script>
+    <script src="../assets/lib/foundation/js/vendor/what-input.js"></script>
+    <script src="../assets/lib/foundation/js/app.js"></script>
+    <link rel="stylesheet" href="../assets/lib/foundation/css/foundation.css" charset="utf-8">
+    <script type="text/javascript">
+      angular.module("telephoneList", ["ngMessages"]);
+
+      angular.module("telephoneList").controller("telephoneListCtrl", function ($scope) {
+        $scope.app = "Lista Telefonica";
+        $scope.contacts = [
+          {name: "Isaac", telephone: "99998888", date: new Date(), color: "blue"},
+          {name: "Ana", telephone: "99348888", date: new Date(), color: "yellow"},
+          {name: "João", telephone: "9994348", date: new Date(), color: "red"},
+          {name: "Carlos", telephone: "9992348", date: new Date(), color: "gray"}
+        ];
+
+        $scope.operadoras = [
+          {name: "Oi", code: 14, category: "Celular"},
+          {name: "Vivo", code: 15, category: "Celular"},
+          {name: "Tim", code: 16, category: "Celular"},
+          {name: "Claro", code: 17, category: "Celular"},
+          {name: "NET", code: 23, category: "Fixo"},
+          {name: "Embratel", code: 21, category: "Fixo"}
+        ];
+
+        $scope.colors = [
+          {name: "Azul", color: "blue"},
+          {name: "Amarelo",color: "yellow"},
+          {name: "Vermelho", color: "red"},
+        ];
+
+        $scope.class = 'selected';
+
+        $scope.addContact = function (contact) {
+          contact.date = new Date();
+          $scope.contacts.push(angular.copy(contact));
+          delete $scope.contact;
+          $scope.contactForm.$setPristine();
+        };
+
+        $scope.clearContact = function (contacts) {
+          $scope.contacts = contacts.filter(function (contact) {
+            if (!contact.selected) return contact;
+          });
+        };
+
+        $scope.isContactSelected = function(contacts) {
+          return contacts.some(function (contact) {
+              return contact.selected;
+          });
+        };
+      });
+    </script>
+    <style media="screen">
+      .title {
+        margin-top: 20px;
+        padding: 50px;
+        background-color: #eee;
+      }
+
+      h3 {
+        margin-bottom: 30px;
+      }
+
+      .selected {
+        background-color: yellow !important;
+      }
+
+      .alert-box {
+        padding: 15px;
+        border: solid 1px red;
+        color: #C30000;
+        margin: 5px 0;
+        background-color: rgba(255, 0, 0, 0.14);
+      }
+    </style>
+  </head>
+  <body>
+    <div ng-controller="telephoneListCtrl" class="row">
+      <div class="small-8 columns small-centered text-center title">
+        <h3>{{app}}</h3>
+        <input type="text" ng-model="searchWord" placeholder="O que você está buscando?"/>
+        <table>
+          <tr>
+            <th></th>
+            <th>Nome</th>
+            <th>Telefone</th>
+            <th>Operadora</th>
+            <th>Inserido em</th>
+            <th>Cor</th>
+          </tr>
+          <tr ng-class="{selected: contact.selected}" ng-repeat="contact in contacts | filter:searchWord">
+            <td><input type="checkbox" ng-model="contact.selected" name="name" value=""></td>
+            <td>{{contact.name}}</td>
+            <td>{{contact.telephone}}</td>
+            <td>{{contact.operadora.name}}</td>
+            <td>{{contact.date | date:'dd/MM/yyyy'}}</td>
+            <td><div class="" style="width: 20px; height: 20px;" ng-style="{'background-color': contact.color.color}"></div></td>
+          </tr>
+        </table>
+        <hr/>
+        <div data-alert class="alert-box">
+          <div ng-messages="contactForm.name.$error" >
+            <div ng-message="required">
+              Por favor preencha o nome.
+              <a href="#" class="close">&times;</a>
+            </div>
+            <div ng-message="minlength">
+              Campo nome no minimo com 3 caracteres
+              <a href="#" class="close">&times;</a>
+            </div>
+          </div>
+          <div ng-messages="contactForm.telephone.$error">
+            <div ng-message="pattern">
+              O campo telefone deve ter o formato 9857-8599
+              <a href="#" class="close">&times;</a>
+            </div>
+          </div>
+
+          <div ng-show="contactForm.telephone.$invalid && contactForm.telephone.$dirty">
+            Por favor preencha o telefone.
+            <a href="#" class="close">&times;</a>
+          </div>
+          <div ng-show="contactForm.operadora.$invalid && contactForm.operadora.$dirty">
+            Por favor selecione a operadora.
+            <a href="#" class="close">&times;</a>
+          </div>
+        </div>
+        <form name="contactForm">
+          <input type="text" ng-model="contact.name" name="name" value="" ng-required="true" ng-minlength="3">
+          <input type="text" ng-model="contact.telephone" name="telephone" value="" ng-required="true" ng-pattern="/^\d{4,5}-\d{4}$/">
+          <select class="" ng-model="contact.operadora" ng-options="operadora.name for operadora in operadoras" name="operadora" ng-required="true">
+            <option value="">Selecione uma operadora</option>
+          </select>
+          <select class="" ng-model="contact.color" ng-options="color.name for color in colors" name="">
+            <option value="">Selecione uma cor</option>
+          </select>
+          <button type="button" class="button" ng-disabled="contactForm.$invalid" ng-click="addContact(contact)" name="button">Adicionar Contato</button>
+          <button type="button" class="button alert" ng-show="isContactSelected(contacts)" ng-click="clearContact(contacts)" name="button">Apagar Contato</button>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="small-8 columns small-centered text-center" style="background-color: #2199e8; padding: 30px; color: white; font-weight: 700;">
+        Criado por Isaac Yung Lopes
+      </div>
+    </div>
+  </body>
+</html>
